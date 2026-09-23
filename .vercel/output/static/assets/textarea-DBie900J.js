@@ -1,0 +1,1 @@
+import{r as e,v as t}from"./card-rNPOwAW2.js";var n=t();function r({className:t,...r}){return(0,n.jsx)(`textarea`,{className:e(`min-h-24 w-full rounded-md border border-border bg-bg px-3 py-2 text-sm text-fg placeholder:text-subtle`,t),...r})}export{r as t};

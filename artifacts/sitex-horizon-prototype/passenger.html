@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SITEX – Passenger View</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body { max-width: 420px; margin: 0 auto; }
+    .phone-frame { min-height: 100vh; padding: 12px; }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <header class="header glass-strong" style="padding:12px 16px;">
+      <div class="logo" style="font-size:1.2rem;">
+        <div class="logo-icon" style="width:28px;height:28px;font-size:0.9rem;">🚌</div>
+        <div>
+          <div>SITEX</div>
+          <div style="font-size:0.65rem;color:var(--text-dim);">Sorsogon Terminal</div>
+        </div>
+      </div>
+      <span class="badge badge-live">● LIVE</span>
+    </header>
+
+    <!-- Search -->
+    <div class="glass" style="padding:12px 16px;margin-bottom:16px;">
+      <input type="text" class="form-control" placeholder="Where are you going?" style="background:rgba(0,0,0,0.3);" />
+    </div>
+
+    <!-- Announcement (smaller) -->
+    <div id="announcement" class="announcement glass-strong critical" style="margin:0 0 16px;padding:16px;">
+      <div class="announcement-title" id="annTitle" style="font-size:1.2rem;">⚠️ NO TRAVEL TODAY</div>
+      <div class="announcement-body" id="annBody" style="font-size:0.9rem;">
+        Due to Typhoon Signal & LGU Ordinance. All trips suspended.
+      </div>
+      <div class="announcement-safety" style="font-size:1rem;">INGAT PO ANG LAHAT</div>
+    </div>
+
+    <!-- Map -->
+    <div class="glass-strong" style="padding:14px;margin-bottom:16px;">
+      <div class="map-title">📍 Buses approaching Sitex</div>
+      <div class="map-placeholder" style="height:180px;">
+        <div style="text-align:center;color:var(--teal);">
+          <div style="font-size:2rem;margin-bottom:8px;">🗺️</div>
+          <div style="font-size:0.85rem;">Live map with 4 buses nearby</div>
+        </div>
+        <div class="bus-dot" style="top:40%;left:50%;"></div>
+        <div class="bus-dot" style="top:30%;left:35%;animation-delay:0.7s;"></div>
+      </div>
+    </div>
+
+    <!-- Upcoming -->
+    <div class="glass-strong" style="padding:14px;margin-bottom:16px;">
+      <div class="arrivals-title" style="font-size:1rem;">UPCOMING BUSES</div>
+      <div id="arrivalsList"></div>
+    </div>
+
+    <!-- Report Button -->
+    <a href="report.html" class="btn btn-primary btn-lg" style="width:100%;margin-bottom:16px;">
+      📢 Report an Issue
+    </a>
+
+    <!-- Bottom Nav -->
+    <div class="footer-status glass" style="margin-top:0;">
+      <div class="nav-links" style="width:100%;justify-content:space-around;">
+        <a href="passenger.html" class="active">Track</a>
+        <a href="index.html">Terminal</a>
+        <a href="report.html">Report</a>
+        <a href="admin.html">Admin</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderArrivals();
+      const saved = localStorage.getItem('sitex_announcement');
+      if (saved) applyAnnouncement(saved);
+    });
+  </script>
+</body>
+</html>

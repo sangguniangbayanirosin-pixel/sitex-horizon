@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SITEX LIVE – Public Terminal Display</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header glass-strong">
+      <div class="logo">
+        <div class="logo-icon">🚌</div>
+        <div>
+          <div>SITEX LIVE</div>
+          <div style="font-size:0.75rem;font-weight:500;color:var(--text-dim);">Sorsogon Bus Terminal • Real-time</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-10">
+        <span class="badge badge-live">● LIVE</span>
+        <span id="clock" style="font-size:0.95rem;font-weight:600;"></span>
+      </div>
+    </header>
+
+    <!-- LIVE ANNOUNCEMENT (Huge) -->
+    <div id="announcement" class="announcement glass-strong critical">
+      <div class="announcement-title" id="annTitle">⚠️ NO TRAVEL TODAY</div>
+      <div class="announcement-body" id="annBody">
+        Due to Typhoon Signal & LGU Ordinance. All trips are suspended until further notice.
+      </div>
+      <div class="announcement-safety">INGAT PO ANG LAHAT</div>
+      <div class="announcement-hotlines">
+        Tumawag sa mga hotlines kung may emergency:<br>
+        📞 911 &nbsp;•&nbsp; 📞 117 &nbsp;•&nbsp; 📞 Local Disaster Hotline
+      </div>
+      <div class="announcement-meta" id="annMeta">Last updated: just now • Stay safe everyone</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid-2">
+      <!-- Map -->
+      <div class="map-panel glass-strong">
+        <div class="map-title">
+          <span>📍 SORSOGON PROVINCE</span>
+          <span class="badge badge-live" style="margin-left:auto;">LIVE TRACKING</span>
+        </div>
+        <div class="map-placeholder" id="mapArea">
+          <!-- Simple SVG Map Representation -->
+          <svg class="map-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <!-- Province outline (simplified) -->
+            <path d="M80,40 Q120,20 180,30 Q250,25 320,50 Q360,80 350,140 Q340,200 300,240 Q240,280 160,270 Q90,250 70,180 Q50,100 80,40 Z"
+                  fill="rgba(78,205,196,0.08)" stroke="rgba(78,205,196,0.4)" stroke-width="2"/>
+            <!-- Routes -->
+            <path d="M200,150 L280,80" stroke="rgba(78,205,196,0.5)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+            <path d="M200,150 L120,90" stroke="rgba(78,205,196,0.5)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+            <path d="M200,150 L100,200" stroke="rgba(78,205,196,0.5)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+            <path d="M200,150 L260,220" stroke="rgba(78,205,196,0.5)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+            <!-- Terminal -->
+            <circle cx="200" cy="150" r="10" fill="#4ecdc4" opacity="0.9"/>
+            <text x="200" y="175" text-anchor="middle" fill="#4ecdc4" font-size="11" font-weight="600">SITEX</text>
+            <!-- Labels -->
+            <text x="290" y="70" fill="#94a3b8" font-size="10">Gubat</text>
+            <text x="90" y="80" fill="#94a3b8" font-size="10">Irosin</text>
+            <text x="70" y="210" fill="#94a3b8" font-size="10">Bulan</text>
+            <text x="270" y="235" fill="#94a3b8" font-size="10">Maatnog</text>
+          </svg>
+          <!-- Animated bus dots -->
+          <div class="bus-dot" style="top:28%; left:62%;"></div>
+          <div class="bus-dot" style="top:35%; left:32%; animation-delay:0.5s;"></div>
+          <div class="bus-dot" style="top:58%; left:28%; animation-delay:1s;"></div>
+          <div class="bus-dot" style="top:68%; left:58%; animation-delay:1.5s;"></div>
+        </div>
+      </div>
+
+      <!-- Arrivals -->
+      <div class="arrivals-panel glass-strong">
+        <div class="arrivals-title">
+          <span>LIVE ARRIVALS</span>
+          <span style="font-size:0.8rem;color:var(--text-dim);">Next buses</span>
+        </div>
+        <div id="arrivalsList">
+          <!-- Populated by JS -->
+        </div>
+        <div class="text-center mt-20">
+          <a href="passenger.html" class="btn btn-ghost">Open Passenger View →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Status -->
+    <div class="footer-status glass">
+      <div>🔄 Last updated <span id="lastUpdate">8 seconds ago</span> • <span id="activeBuses">12</span> buses active</div>
+      <div class="nav-links">
+        <a href="index.html" class="active">Terminal</a>
+        <a href="passenger.html">Passenger</a>
+        <a href="driver.html">Driver</a>
+        <a href="admin.html">Admin</a>
+        <a href="report.html">Report</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Terminal specific
+    document.addEventListener('DOMContentLoaded', () => {
+      renderArrivals();
+      updateClock();
+      setInterval(updateClock, 1000);
+      setInterval(() => {
+        document.getElementById('lastUpdate').textContent = Math.floor(Math.random()*12+3) + ' seconds ago';
+      }, 5000);
+    });
+  </script>
+</body>
+</html>

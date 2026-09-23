@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SITEX – Admin Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header glass-strong">
+      <div class="logo">
+        <div class="logo-icon">⚙️</div>
+        <div>
+          <div>SITEX ADMIN</div>
+          <div style="font-size:0.75rem;color:var(--text-dim);">Control Center • SM Sorsogon</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-10">
+        <span class="badge badge-live">● LIVE OPERATIONS</span>
+        <span id="clock"></span>
+      </div>
+    </header>
+
+    <div class="grid-2">
+      <!-- Left: Announcement Editor -->
+      <div class="glass-strong" style="padding:24px;">
+        <h2 style="margin-bottom:20px;font-size:1.3rem;">📢 Live Announcement Editor</h2>
+
+        <div class="form-group">
+          <label>Urgency Level</label>
+          <select id="annType" class="form-control">
+            <option value="critical">Critical (No Travel / Typhoon)</option>
+            <option value="caution">Caution (Limited Service / Weather)</option>
+            <option value="info">Info (Service Update)</option>
+            <option value="none">None (Hide Announcement)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Quick Templates</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <button class="btn btn-ghost" onclick="loadTemplate('critical')">No Travel (Typhoon)</button>
+            <button class="btn btn-ghost" onclick="loadTemplate('caution')">Limited Buses</button>
+            <button class="btn btn-ghost" onclick="loadTemplate('info')">Service Resumed</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="annTitleInput" class="form-control" value="⚠️ NO TRAVEL TODAY" />
+        </div>
+
+        <div class="form-group">
+          <label>Message Body</label>
+          <textarea id="annBodyInput" class="form-control">Due to Typhoon Signal & LGU Ordinance. All trips are suspended until further notice.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="showHotlines" checked /> Show Emergency Hotlines
+          </label>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;" onclick="publishAnnouncement()">
+          🚀 Publish to All Terminal Screens
+        </button>
+
+        <div id="publishMsg" class="text-center mt-20" style="color:var(--mint);display:none;">
+          ✅ Announcement published successfully!
+        </div>
+      </div>
+
+      <!-- Right: Preview + Reports -->
+      <div>
+        <div class="glass-strong" style="padding:20px;margin-bottom:20px;">
+          <h3 style="margin-bottom:12px;">Preview</h3>
+          <div id="previewPanel" class="announcement glass critical" style="margin:0;padding:20px;">
+            <div class="announcement-title" id="previewTitle">⚠️ NO TRAVEL TODAY</div>
+            <div class="announcement-body" id="previewBody">Due to Typhoon Signal & LGU Ordinance...</div>
+            <div class="announcement-safety">INGAT PO ANG LAHAT</div>
+            <div class="announcement-hotlines" id="previewHotlines">
+              📞 911 • 📞 117 • 📞 Local Disaster Hotline
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-strong" style="padding:20px;">
+          <h3 style="margin-bottom:12px;">📥 Recent Passenger Reports</h3>
+          <div id="reportsList">
+            <div class="arrival-card">
+              <div>
+                <div class="arrival-route">Late Arrival</div>
+                <div class="arrival-via">Gubat route • 10 mins ago</div>
+              </div>
+              <span class="badge badge-delayed">New</span>
+            </div>
+            <div class="arrival-card">
+              <div>
+                <div class="arrival-route">Bus Condition</div>
+                <div class="arrival-via">Aircon not working • 1 hr ago</div>
+              </div>
+              <span class="badge badge-on-time">Reviewing</span>
+            </div>
+            <div class="arrival-card">
+              <div>
+                <div class="arrival-route">Safety Concern</div>
+                <div class="arrival-via">Reported to Cooperative • 3 hrs ago</div>
+              </div>
+              <span class="badge badge-on-time">Forwarded</span>
+            </div>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-dim);margin-top:12px;">
+            Reports are sent to Sitex (SM Sorsogon) first, then forwarded to the heads of the concerned bus cooperatives.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-status glass" style="margin-top:24px;">
+      <div>SITEX Control Center • Powered for SM Sorsogon & Bus Cooperatives</div>
+      <div class="nav-links">
+        <a href="index.html">Terminal Display</a>
+        <a href="passenger.html">Passenger</a>
+        <a href="driver.html">Driver</a>
+        <a href="admin.html" class="active">Admin</a>
+        <a href="report.html">Report Form</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    function loadTemplate(type) {
+      document.getElementById('annType').value = type;
+      const data = announcements[type];
+      if (data) {
+        document.getElementById('annTitleInput').value = data.title;
+        document.getElementById('annBodyInput').value = data.body;
+        document.getElementById('showHotlines').checked = data.hotlines;
+        updatePreview();
+      }
+    }
+
+    function updatePreview() {
+      const type = document.getElementById('annType').value;
+      const title = document.getElementById('annTitleInput').value;
+      const body = document.getElementById('annBodyInput').value;
+      const showHot = document.getElementById('showHotlines').checked;
+
+      const panel = document.getElementById('previewPanel');
+      panel.className = 'announcement glass ' + type;
+      document.getElementById('previewTitle').textContent = title;
+      document.getElementById('previewBody').textContent = body;
+      document.getElementById('previewHotlines').style.display = showHot ? 'block' : 'none';
+    }
+
+    function publishAnnouncement() {
+      const type = document.getElementById('annType').value;
+      localStorage.setItem('sitex_announcement', type);
+      // Also save custom text if needed
+      localStorage.setItem('sitex_ann_title', document.getElementById('annTitleInput').value);
+      localStorage.setItem('sitex_ann_body', document.getElementById('annBodyInput').value);
+
+      document.getElementById('publishMsg').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('publishMsg').style.display = 'none';
+      }, 3000);
+
+      // In real system this would push via WebSocket
+      console.log('Published:', type);
+    }
+
+    document.getElementById('annType').addEventListener('change', updatePreview);
+    document.getElementById('annTitleInput').addEventListener('input', updatePreview);
+    document.getElementById('annBodyInput').addEventListener('input', updatePreview);
+    document.getElementById('showHotlines').addEventListener('change', updatePreview);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateClock();
+      setInterval(updateClock, 1000);
+      updatePreview();
+    });
+  </script>
+</body>
+</html>

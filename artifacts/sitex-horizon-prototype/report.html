@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SITEX – Report an Issue</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body { max-width: 480px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div style="padding:16px;min-height:100vh;">
+    <header class="header glass-strong" style="padding:14px 16px;">
+      <div class="logo" style="font-size:1.2rem;">
+        <div class="logo-icon" style="width:28px;height:28px;">📢</div>
+        <div>Report an Issue</div>
+      </div>
+    </header>
+
+    <div class="glass-strong" style="padding:24px;">
+      <p style="color:var(--text-dim);margin-bottom:20px;font-size:0.95rem;">
+        Your report will be sent to <strong>Sitex (SM Sorsogon)</strong> administrators and forwarded to the heads of the concerned bus cooperative / corporation.
+      </p>
+
+      <div class="form-group">
+        <label>Select Issue Category</label>
+        <div class="report-cats" id="categories">
+          <div class="report-cat" data-cat="Late Arrival">🕒 Late Arrival</div>
+          <div class="report-cat" data-cat="Driver/Conductor Behavior">👤 Behavior</div>
+          <div class="report-cat" data-cat="Bus Condition">🚌 Bus Condition</div>
+          <div class="report-cat" data-cat="Overcharging">💰 Overcharging</div>
+          <div class="report-cat" data-cat="Safety Concern">⚠️ Safety</div>
+          <div class="report-cat" data-cat="Others">📝 Others</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Route / Destination (optional)</label>
+        <input type="text" id="route" class="form-control" placeholder="e.g. Gubat, Irosin, Bulan..." />
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="description" class="form-control" placeholder="Please describe what happened..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="anonymous" checked /> Submit anonymously
+        </label>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;" onclick="submitReport()">
+        Submit Report
+      </button>
+    </div>
+
+    <!-- Success Message -->
+    <div id="success" class="glass-strong text-center" style="padding:40px 24px;margin-top:20px;display:none;">
+      <div style="font-size:3rem;margin-bottom:12px;">✅</div>
+      <h2 style="margin-bottom:8px;">Salamat!</h2>
+      <p style="color:var(--text-dim);margin-bottom:16px;">
+        Your report has been sent successfully.<br>
+        Ticket #<span id="ticketNo">SX-2026-0847</span>
+      </p>
+      <p style="font-size:0.85rem;color:var(--mint);">
+        Sitex administrators will review it and forward to the concerned cooperative if needed.
+      </p>
+      <a href="passenger.html" class="btn btn-ghost" style="margin-top:20px;">← Back to Tracking</a>
+    </div>
+
+    <div class="footer-status glass" style="margin-top:24px;">
+      <div class="nav-links" style="width:100%;justify-content:space-around;">
+        <a href="passenger.html">Track</a>
+        <a href="index.html">Terminal</a>
+        <a href="report.html" class="active">Report</a>
+        <a href="admin.html">Admin</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedCat = null;
+
+    document.querySelectorAll('.report-cat').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.report-cat').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedCat = el.dataset.cat;
+      });
+    });
+
+    function submitReport() {
+      if (!selectedCat) {
+        alert('Please select a category first.');
+        return;
+      }
+
+      // Simulate sending to Sitex → Cooperative heads
+      const ticket = 'SX-2026-' + Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('ticketNo').textContent = ticket;
+
+      // Hide form, show success
+      document.querySelector('.glass-strong').style.display = 'none';
+      document.getElementById('success').style.display = 'block';
+
+      // In real system: send to backend → Sitex admin → Cooperative heads
+      console.log('Report submitted:', {
+        category: selectedCat,
+        route: document.getElementById('route').value,
+        description: document.getElementById('description').value,
+        anonymous: document.getElementById('anonymous').checked,
+        ticket
+      });
+    }
+  </script>
+</body>
+</html>
