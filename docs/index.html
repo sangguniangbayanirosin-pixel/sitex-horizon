@@ -1,116 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sitex Horizon — SITEX live bus board</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Sans+3:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --bg: #02010a;
-        --fg: #e8eef8;
-        --muted: #9ec5e8;
-        --accent: #38bdf8;
-      }
-      * { box-sizing: border-box; }
-      html, body {
-        margin: 0;
-        min-height: 100%;
-        background:
-          radial-gradient(ellipse 80% 50% at 50% 0%, #0b1a33 0%, transparent 55%),
-          var(--bg);
-        color: var(--fg);
-        font-family: "Source Sans 3", system-ui, sans-serif;
-      }
-      main {
-        max-width: 40rem;
-        margin: 0 auto;
-        padding: 3.5rem 1.25rem 4rem;
-      }
-      h1 {
-        font-family: Fraunces, Georgia, serif;
-        font-size: clamp(2rem, 6vw, 3.25rem);
-        font-weight: 600;
-        letter-spacing: -0.03em;
-        margin: 0.35rem 0 0;
-      }
-      .kicker {
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--accent);
-      }
-      p { color: var(--muted); line-height: 1.55; }
-      .card {
-        margin-top: 1.5rem;
-        padding: 1.15rem 1.25rem;
-        border: 1px solid rgb(56 189 248 / 0.22);
-        border-radius: 1rem;
-        background: rgb(8 18 36 / 0.72);
-        backdrop-filter: blur(16px);
-      }
-      .card h2 {
-        margin: 0 0 0.4rem;
-        font-size: 1.05rem;
-      }
-      a {
-        color: var(--accent);
-        font-weight: 700;
-      }
-      ol { margin: 0.4rem 0 0; padding-left: 1.2rem; color: var(--fg); }
-      li { margin: 0.35rem 0; }
-      .warn {
-        border-color: rgb(250 204 21 / 0.35);
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <p class="kicker">SITEX · SM Sorsogon</p>
-      <h1>Sitex Horizon</h1>
-      <p>
-        Live bus arrivals for the Sorsogon Integrated Terminal Exchange.
-        Phone GPS updates speed and ETA for all 16 municipalities.
-      </p>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sitex Horizon — SITEX live board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #02010a;
+      --fg: #e8eef8;
+      --muted: #9ec5e8;
+      --subtle: #7aa3c7;
+      --accent: #38bdf8;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --danger: #f87171;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #02010a; color: var(--fg); font-family: "Source Sans 3", system-ui, sans-serif; }
+    body { background: radial-gradient(ellipse 90% 50% at 50% -10%, #12305a 0%, transparent 55%), #02010a; }
+    #glitter { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .wrap { position: relative; z-index: 1; max-width: 72rem; margin: 0 auto; padding: 1rem 1rem 2.5rem; }
+    header.bar {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem;
+      padding: .85rem 1rem; border-radius: 1rem;
+      background: rgb(8 18 36 / .62); border: 1px solid rgb(56 189 248 / .22); backdrop-filter: blur(16px);
+    }
+    .brand { font-family: Fraunces, Georgia, serif; font-size: 1.35rem; margin: 0; }
+    .sub { margin: .1rem 0 0; font-size: .75rem; color: var(--muted); }
+    nav { display: flex; flex-wrap: wrap; gap: .25rem; }
+    nav button, .lg {
+      height: 2.4rem; padding: 0 .85rem; border: 0; border-radius: .6rem; cursor: pointer;
+      background: transparent; color: var(--muted); font: inherit; font-weight: 600;
+    }
+    nav button.on { background: rgb(56 189 248 / .18); color: var(--accent); }
+    .clock { font-variant-numeric: tabular-nums; font-size: .9rem; }
+    .glass {
+      background: rgb(8 18 36 / .62); border: 1px solid rgb(56 189 248 / .2);
+      border-radius: 1rem; padding: 1rem; backdrop-filter: blur(16px);
+    }
+    .announce {
+      margin: 1rem 0; padding: .9rem 1rem; border-radius: 1rem;
+      background: linear-gradient(90deg, rgb(185 28 28 / .45), rgb(8 18 36 / .7));
+      border: 1px solid rgb(248 113 113 / .35); overflow: hidden;
+    }
+    .announce p { margin: 0; font-weight: 700; white-space: nowrap; animation: marq 28s linear infinite; }
+    @keyframes marq { from { transform: translateX(8%); } to { transform: translateX(-80%); } }
+    .sign {
+      display: none; margin-bottom: 1rem; padding: 1.1rem 1rem; text-align: center;
+      border-radius: 1rem; background: rgb(4 120 87 / .28); border: 1px solid rgb(52 211 153 / .4);
+    }
+    .sign.show { display: block; }
+    .sign .plate { font-family: Fraunces, Georgia, serif; font-size: clamp(1.8rem, 6vw, 3rem); letter-spacing: .04em; }
+    .grid { display: grid; gap: 1rem; }
+    @media (min-width: 900px) { .grid.main { grid-template-columns: 1.15fr .85fr; } }
+    h2 { margin: 0 0 .7rem; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+    .bus {
+      display: grid; grid-template-columns: auto 1fr auto; gap: .7rem; align-items: center;
+      padding: .55rem 0; border-bottom: 1px solid rgb(56 189 248 / .12);
+    }
+    .bus:last-child { border-bottom: 0; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .plate { font-weight: 700; }
+    .meta { font-size: .8rem; color: var(--muted); }
+    .eta { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); text-align: right; }
+    .eta small { display: block; font-weight: 500; color: var(--subtle); font-size: .7rem; }
+    .map {
+      position: relative; height: 22rem; border-radius: .85rem; overflow: hidden;
+      background: #07111f; border: 1px solid rgb(56 189 248 / .18);
+    }
+    .map svg { width: 100%; height: 100%; }
+    .town { font-size: 8px; fill: #9ec5e8; }
+    .lg {
+      background: linear-gradient(180deg, rgb(180 220 255 / .28), rgb(30 80 140 / .18));
+      border: 1px solid rgb(56 189 248 / .35); color: var(--fg); box-shadow: inset 0 1px 0 rgb(255 255 255 / .25);
+    }
+    .lg:active { transform: scale(.97); }
+    .lg:disabled { opacity: .45; cursor: not-allowed; }
+    .lg.ok { background: rgb(4 120 87 / .45); border-color: rgb(52 211 153 / .5); }
+    .towns { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: .45rem; }
+    .town-chip { display: flex; align-items: center; gap: .45rem; font-size: .8rem; padding: .4rem .5rem; border-radius: .55rem; background: rgb(255 255 255 / .04); }
+    .hidden { display: none; }
+    label { display: block; font-size: .75rem; color: var(--muted); margin: .5rem 0 .2rem; }
+    input {
+      width: 100%; height: 2.5rem; border-radius: .55rem; border: 1px solid rgb(56 189 248 / .28);
+      background: rgb(2 8 20 / .6); color: var(--fg); padding: 0 .7rem; font: inherit;
+    }
+    .note { font-size: .78rem; color: var(--subtle); line-height: 1.45; }
+    .row { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .75rem; }
+  </style>
+</head>
+<body>
+<canvas id="glitter"></canvas>
+<div class="wrap">
+  <header class="bar">
+    <div>
+      <p class="sub">SITEX · SM SORSOGON</p>
+      <h1 class="brand">Sitex Horizon</h1>
+    </div>
+    <nav>
+      <button class="on" data-tab="terminal">Terminal</button>
+      <button data-tab="passenger">Passenger</button>
+      <button data-tab="driver">Driver</button>
+    </nav>
+    <div class="clock" id="clock">—</div>
+  </header>
 
-      <section class="card warn">
-        <h2>This GitHub Pages address is not the live board</h2>
-        <p>
-          GitHub Pages only hosts static files. Sitex Horizon is a live app
-          (GPS, database, driver confirm). It cannot run here — that is why you
-          saw <strong>404 File not found</strong>.
-        </p>
-      </section>
+  <div class="announce">
+    <p>INGAT PO ANG LAHAT · Live board for SITEX · 16 municipalities · ETA = remaining km ÷ speed · typhoon / ordinance notices appear here · emergency: 911 · PNP 117 · Coast Guard 143</p>
+  </div>
+  <div class="sign" id="sign">
+    <div class="sub">CONFIRMED · ON THE WAY TO SITEX</div>
+    <div class="plate" id="signPlate">—</div>
+    <div class="meta" id="signMeta"></div>
+  </div>
 
-      <section class="card">
-        <h2>How to open the working website</h2>
-        <ol>
-          <li>Go back to <strong>Grok Build</strong> (this project).</li>
-          <li>Tap <strong>Publish</strong> at the top of the screen.</li>
-          <li>Grok will give you a real HTTPS link you can open on a phone and send to SM Sorsogon.</li>
-        </ol>
-        <p>
-          Until then, use the <strong>live preview</strong> inside the Grok chat —
-          Terminal, Passenger, Driver, Report, Control.
-        </p>
-      </section>
+  <section id="terminal" class="grid main">
+    <div class="glass">
+      <h2>Next buses to SITEX</h2>
+      <div id="arrivals"></div>
+    </div>
+    <div class="glass">
+      <h2>Live map · Sorsogon</h2>
+      <div class="map" id="map"></div>
+    </div>
+    <div class="glass" style="grid-column:1/-1">
+      <h2>Municipalities · official road km</h2>
+      <div class="towns" id="towns"></div>
+    </div>
+  </section>
 
-      <section class="card">
-        <h2>Source code</h2>
-        <p>
-          The full project is on GitHub (for SM, cooperatives, and thesis):
-          <a href="https://github.com/sangguniangbayanirosin-pixel/sitex-horizon">github.com/sangguniangbayanirosin-pixel/sitex-horizon</a>
-        </p>
-        <p>
-          Driver demo: plate <strong>7G-4821</strong> · trip code <strong>1982</strong><br />
-          Staff PIN: <strong>4700</strong>
-        </p>
-      </section>
-    </main>
-  </body>
+  <section id="passenger" class="hidden glass">
+    <h2>Waiting passenger</h2>
+    <p class="note">Ask if a bus is coming. One ask per bus until it arrives or the driver revokes. No account needed.</p>
+    <div id="plist"></div>
+  </section>
+
+  <section id="driver" class="hidden glass">
+    <h2>Driver / conductor</h2>
+    <p class="note">Demo: plate <strong>7G-4821</strong> · trip code <strong>1982</strong>. On a real phone, GPS keeps updating ETA after you confirm.</p>
+    <div id="dlogin">
+      <label>Plate</label><input id="plate" value="7G-4821" autocomplete="off" />
+      <label>Trip code</label><input id="code" value="1982" autocomplete="off" />
+      <div class="row"><button class="lg" id="claim">Start trip</button></div>
+    </div>
+    <div id="dcockpit" class="hidden">
+      <p class="meta" id="who"></p>
+      <div id="asks"></div>
+      <div class="row">
+        <button class="lg" id="revoke">Revoke confirm</button>
+        <button class="lg" id="end">End trip</button>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+const TOWNS = [
+  { id:"sorsogon", name:"Sorsogon", zip:"4700", km:3.2, lat:12.9707, lng:124.0052, color:"#5B9DFF" },
+  { id:"bacon", name:"Bacon", zip:"4701", km:10.7, lat:13.0378, lng:124.041, color:"#FF6B9D" },
+  { id:"casiguran", name:"Casiguran", zip:"4702", km:19.03, lat:12.8734, lng:124.0093, color:"#7CFF6B" },
+  { id:"juban", name:"Juban", zip:"4703", km:23.05, lat:12.8476, lng:123.9894, color:"#C77DFF" },
+  { id:"bulusan", name:"Bulusan", zip:"4704", km:42.52, lat:12.7518, lng:124.1371, color:"#2EE6C8" },
+  { id:"magallanes", name:"Magallanes", zip:"4705", km:48.13, lat:12.8271, lng:123.8371, color:"#FF8A3D" },
+  { id:"bulan", name:"Bulan", zip:"4706", km:63.09, lat:12.6677, lng:123.8775, color:"#6B7CFF" },
+  { id:"irosin", name:"Irosin", zip:"4707", km:43.35, lat:12.7023, lng:124.0341, color:"#FFE14A" },
+  { id:"matnog", name:"Matnog", zip:"4708", km:66.64, lat:12.5861, lng:124.0856, color:"#FF3B3B" },
+  { id:"sta", name:"Sta. Magdalena", zip:"4709", km:71.97, lat:12.6463, lng:124.1079, color:"#3DFF8A" },
+  { id:"gubat", name:"Gubat", zip:"4710", km:19.16, lat:12.9178, lng:124.1241, color:"#00D4FF" },
+  { id:"prieto", name:"Prieto Diaz", zip:"4711", km:34.4, lat:13.0406, lng:124.1932, color:"#FF4DC4" },
+  { id:"barcelona", name:"Barcelona", zip:"4712", km:27.13, lat:12.8663, lng:124.1451, color:"#3B6BFF" },
+  { id:"castilla", name:"Castilla", zip:"4713", km:25.11, lat:12.9501, lng:123.8789, color:"#B347FF" },
+  { id:"pilar", name:"Pilar", zip:"4714", km:55.69, lat:12.9231, lng:123.6741, color:"#FFB347" },
+  { id:"donsol", name:"Donsol", zip:"4715", km:66.47, lat:12.9077, lng:123.5986, color:"#1DB954" }
+];
+const SITEX = { lat: 12.9735, lng: 123.9928 };
+const PLATES = ["7G-4821","SBC-1104","EAA-2209","FBT-3318","GSC-4472","HND-5510","JLP-6623","KMR-7701","LNV-8834","MPQ-9940","NRS-1027","PTU-2156","QVW-3288","RXZ-4311","SYA-5480","TZB-6592"];
+const OPS = ["Penafrancia Tours","Bicol Isarog","Raymond Transport","Cagsawa","Sorsogon Cooperative","JVH Liner","Pamar Tours"];
+
+function xy(lat, lng) {
+  const x = ((lng - 123.55) / (124.22 - 123.55)) * 100;
+  const y = ((13.08 - lat) / (13.08 - 12.55)) * 100;
+  return [Math.max(4, Math.min(96, x)), Math.max(6, Math.min(94, y))];
+}
+function etaMin(km, speed) { return speed > 1 ? Math.round((km / speed) * 60) : 999; }
+function fmtEta(m) { if (m >= 999) return "—"; if (m < 1) return "Arriving"; return m + " min"; }
+
+const buses = TOWNS.map((t, i) => {
+  const frac = 0.22 + ((i * 17) % 65) / 100;
+  return {
+    id: PLATES[i], plate: PLATES[i], dest: t.name, zip: t.zip, color: t.color,
+    op: OPS[i % OPS.length], km: Math.max(0.6, t.km * (1 - frac)),
+    speed: t.km > 40 ? 52 : 44, lat: t.lat, lng: t.lng, town: t,
+    ask: null
+  };
+});
+let session = null;
+
+function tick() {
+  const now = new Date();
+  document.getElementById("clock").textContent = now.toLocaleTimeString("en-PH", { hour12: false });
+  buses.forEach((b) => {
+    b.km = Math.max(0.15, b.km - (b.speed / 3600) * 0.9);
+    const [sx, sy] = xy(SITEX.lat, SITEX.lng);
+    const [tx, ty] = xy(b.town.lat, b.town.lng);
+    const p = Math.min(0.92, 1 - b.km / Math.max(b.town.km, 1));
+    b.x = tx + (sx - tx) * p;
+    b.y = ty + (sy - ty) * p;
+    if (b.km < 0.4 && b.ask) b.ask = null;
+  });
+  render();
+}
+
+function render() {
+  const list = [...buses].sort((a, b) => etaMin(a.km, a.speed) - etaMin(b.km, b.speed));
+  document.getElementById("arrivals").innerHTML = list.slice(0, 8).map((b) => `
+    <div class="bus">
+      <span class="dot" style="background:${b.color}"></span>
+      <div><div class="plate">${b.plate}</div><div class="meta">${b.dest} · ${b.zip} · ${b.km.toFixed(1)} km · ${Math.round(b.speed)} km/h</div></div>
+      <div class="eta">${fmtEta(etaMin(b.km, b.speed))}<small>${b.ask === "confirmed" ? "CONFIRMED" : b.op}</small></div>
+    </div>`).join("");
+
+  const [sx, sy] = xy(SITEX.lat, SITEX.lng);
+  document.getElementById("map").innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="100" fill="#07111f"/>
+    ${TOWNS.map((t) => { const [x,y]=xy(t.lat,t.lng); return `<circle cx="${x}" cy="${y}" r="0.7" fill="${t.color}"/><text class="town" x="${x+1.2}" y="${y+1.1}">${t.name}</text>`; }).join("")}
+    <circle cx="${sx}" cy="${sy}" r="1.6" fill="#38bdf8"/><text class="town" x="${sx+2}" y="${sy-1.4}" fill="#38bdf8">SITEX</text>
+    ${buses.map((b) => `<g transform="translate(${b.x},${b.y}) rotate(20)"><rect x="-1.1" y="-.45" width="2.2" height=".9" rx=".25" fill="${b.color}"/></g>`).join("")}
+  </svg>`;
+
+  document.getElementById("towns").innerHTML = TOWNS.map((t) =>
+    `<div class="town-chip"><span class="dot" style="background:${t.color}"></span>${t.name}<span class="meta"> · ${t.zip} · ${t.km} km</span></div>`
+  ).join("");
+
+  const conf = buses.find((b) => b.ask === "confirmed");
+  const sign = document.getElementById("sign");
+  if (conf) {
+    sign.classList.add("show");
+    document.getElementById("signPlate").textContent = conf.plate;
+    document.getElementById("signMeta").textContent = conf.dest + " · ETA " + fmtEta(etaMin(conf.km, conf.speed));
+  } else sign.classList.remove("show");
+
+  document.getElementById("plist").innerHTML = list.map((b) => {
+    const locked = !!b.ask;
+    const label = b.ask === "confirmed" ? "Confirmed" : b.ask === "pending" ? "Waiting for driver" : "Ask if coming";
+    return `<div class="bus">
+      <span class="dot" style="background:${b.color}"></span>
+      <div><div class="plate">${b.plate}</div><div class="meta">${b.dest} · ${fmtEta(etaMin(b.km, b.speed))}</div></div>
+      <button class="lg ${b.ask === "confirmed" ? "ok" : ""}" ${locked ? "disabled" : ""} data-ask="${b.id}">${label}</button>
+    </div>`;
+  }).join("");
+
+  const mine = session ? buses.filter((b) => b.plate === session && b.ask === "pending") : [];
+  document.getElementById("asks").innerHTML = session
+    ? (mine.length ? mine.map((b) => `<p>Passenger asked if <strong>${b.plate}</strong> is coming to SITEX.</p><button class="lg ok" data-confirm="${b.id}">Confirmed</button>`).join("")
+      : `<p class="note">No pending ask. GPS demo speed ${Math.round(buses.find(b=>b.plate===session)?.speed || 0)} km/h.</p>`)
+    : "";
+}
+
+document.querySelector("nav").addEventListener("click", (e) => {
+  const btn = e.target.closest("button"); if (!btn) return;
+  document.querySelectorAll("nav button").forEach((b) => b.classList.toggle("on", b === btn));
+  ["terminal","passenger","driver"].forEach((id) => document.getElementById(id).classList.toggle("hidden", id !== btn.dataset.tab));
+});
+document.getElementById("plist").addEventListener("click", (e) => {
+  const id = e.target.dataset.ask; if (!id) return;
+  const b = buses.find((x) => x.id === id); if (!b || b.ask) return;
+  b.ask = "pending"; render();
+});
+document.getElementById("claim").onclick = () => {
+  const plate = document.getElementById("plate").value.trim().toUpperCase();
+  const code = document.getElementById("code").value.trim();
+  if (plate === "7G-4821" && code === "1982") {
+    session = plate;
+    document.getElementById("dlogin").classList.add("hidden");
+    document.getElementById("dcockpit").classList.remove("hidden");
+    document.getElementById("who").textContent = "Live · " + plate + " · Irosin corridor";
+    render();
+  } else alert("Use demo plate 7G-4821 and code 1982.");
+};
+document.getElementById("asks").addEventListener("click", (e) => {
+  const id = e.target.dataset.confirm; if (!id) return;
+  const b = buses.find((x) => x.id === id); if (b) b.ask = "confirmed";
+  render();
+});
+document.getElementById("revoke").onclick = () => {
+  buses.forEach((b) => { if (b.plate === session) b.ask = null; });
+  render();
+};
+document.getElementById("end").onclick = () => {
+  buses.forEach((b) => { if (b.plate === session) b.ask = null; });
+  session = null;
+  document.getElementById("dlogin").classList.remove("hidden");
+  document.getElementById("dcockpit").classList.add("hidden");
+  render();
+};
+
+const cv = document.getElementById("glitter"), ctx = cv.getContext("2d");
+let mx = -999, my = -999, ps = [];
+function size() { cv.width = innerWidth; cv.height = innerHeight; }
+function spawn() {
+  const n = Math.min(2200, Math.floor((innerWidth * innerHeight) / 900));
+  ps = Array.from({ length: n }, () => ({
+    x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+    vx: 0, vy: 0, s: Math.random() * 1.2 + .2, a: Math.random()
+  }));
+}
+addEventListener("pointermove", (e) => { mx = e.clientX; my = e.clientY; });
+function glitter() {
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  for (const p of ps) {
+    const dx = p.x - mx, dy = p.y - my, d = Math.hypot(dx, dy) || 1;
+    if (d < 90) { const f = (1 - d / 90); p.vx += (dx / d) * f * 1.6; p.vy += (dy / d) * f * 1.6; }
+    p.vx *= .92; p.vy *= .92; p.x += p.vx; p.y += p.vy;
+    p.a += 0.02; ctx.fillStyle = `rgba(180,220,255,${0.15 + 0.35 * Math.abs(Math.sin(p.a))})`;
+    ctx.fillRect(p.x, p.y, p.s, p.s);
+  }
+  requestAnimationFrame(glitter);
+}
+size(); spawn(); glitter();
+addEventListener("resize", () => { size(); spawn(); });
+tick(); setInterval(tick, 900);
+</script>
+</body>
 </html>
